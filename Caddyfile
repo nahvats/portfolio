@@ -7,4 +7,8 @@ shrivatsa.net, www.shrivatsa.net {
     file_server
     encode gzip
     try_files {path} /index.html
+
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
 }

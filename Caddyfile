@@ -1,0 +1,10 @@
+# Production — shrivatsa.net
+# Caddy auto-provisions TLS via Let's Encrypt.
+# For local dev, replace domain with ":8080"
+
+shrivatsa.net, www.shrivatsa.net {
+    root * /srv
+    file_server
+    encode gzip
+    try_files {path} /index.html
+}

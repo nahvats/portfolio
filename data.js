@@ -84,7 +84,7 @@ const NOW = {
     },
     {
       label: "reading",
-      text: "Discovery of India: Nehru. \nSong Sung True: Malka Pukhraj",
+      text: "Discovery of India. Song Sung True. Inglorious Empire.",
     },
   ],
 };
@@ -95,7 +95,7 @@ const EXPERIENCE = [
     year: "2026 — now",
     role: "Research Engineer",
     company: "NYU IT · HSRN",
-    desc: "Real-time applications team. Designing and deploying high-throughput computational pipelines on HSRN infrastructure, collaborating with research labs across NYU.",
+    desc: "Real-time applications team. Designing and deploying high-throughput computational pipelines on NYU's High Speed Research Network, collaborating with labs across NYU.",
     loc: "New York, NY"
   },
   {

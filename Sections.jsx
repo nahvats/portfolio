@@ -130,7 +130,7 @@ function About() {
           <p>
             I'm Nahush — a research engineer based in {PROFILE.location}. I work mostly at the
             overlap of <span className="hot">algorithms, systems, and AI</span>, focusing on
-            building reliable and optimized Machine Learning infrastructure that can bring transformational change to soceity.
+            building reliable and optimized Machine Learning infrastructure that can bring transformational change to society.
           </p>
           <p>
             Right now, I'm part of the <a href="https://www.takayabe.net/" target="_blank" rel="noopener noreferrer">RUN Lab</a> at NYU CUSP, where I'm building Agent Based Models (ABMs)

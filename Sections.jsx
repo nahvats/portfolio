@@ -65,41 +65,37 @@ function Work() {
   return (
     <section id="work" className="container section">
       <SectionHead eyebrow="WORK" num="03" title="Past projects" />
-      <ul className="proj-list">
+      <div className="proj-stack">
         {PROJECTS.map((p, i) => {
           const inner = (
             <React.Fragment>
-              <span className="proj-idx">{String(i + 1).padStart(2, '0')}</span>
-              <div className="proj-body">
-                <div className="proj-row">
-                  <h3 className="proj-title">
-                    {p.title}
-                    {p.private && <span className="proj-lock" title="private repo">·  private</span>}
-                  </h3>
-                  <span className="proj-year">{p.year}</span>
+              <div className="proj-top">
+                <div className="proj-head">
+                  <span className="proj-dot" aria-hidden></span>
+                  <h3 className="proj-title">{p.title}</h3>
+                  {p.private && <span className="proj-badge">private</span>}
                 </div>
-                <p className="proj-desc">{p.summary}</p>
+                <span className="proj-year">{p.year}</span>
+              </div>
+              <p className="proj-desc">{p.summary}</p>
+              <div className="proj-foot">
                 <div className="proj-tags">
                   {p.tags.map((t, idx) => (
                     <React.Fragment key={t}>
-                      <span>{t}</span>
-                      {idx < p.tags.length - 1 && <span className="proj-tag-sep">/</span>}
+                      <span className="proj-tag">{t}</span>
+                      {idx < p.tags.length - 1 && <span className="proj-tag-sep" aria-hidden>·</span>}
                     </React.Fragment>
                   ))}
                 </div>
+                {!p.private && <span className="proj-arr" aria-hidden>→</span>}
               </div>
-              {!p.private && <span className="proj-arr" aria-hidden>→</span>}
             </React.Fragment>
           );
-          return (
-            <li key={p.id} className={"proj-item" + (p.private ? " is-private" : "")}>
-              {p.private
-                ? <div className="proj-link">{inner}</div>
-                : <a className="proj-link" href={p.href} target="_blank" rel="noopener noreferrer">{inner}</a>}
-            </li>
-          );
+          return p.private
+            ? <div key={p.id} className="proj-card is-private">{inner}</div>
+            : <a key={p.id} className="proj-card" href={p.href} target="_blank" rel="noopener noreferrer">{inner}</a>;
         })}
-      </ul>
+      </div>
     </section>
   );
 }
@@ -173,25 +169,24 @@ function Experience() {
   return (
     <section id="experience" className="container section">
       <SectionHead eyebrow="EXPERIENCE" num="04" title="What I've worked on" />
-      <ol className="exp-timeline">
+      <div className="exp-list">
         {EXPERIENCE.map((e, i) => (
-          <li key={i} className="exp-row">
-            <span className="exp-dot" aria-hidden></span>
-            <div className="exp-meta">
+          <div key={i} className="exp-row">
+            <div className="exp-when">
               <span className="exp-year">{e.year}</span>
               <span className="exp-loc">{e.loc}</span>
             </div>
             <div className="exp-body">
               <h4 className="exp-head">
-                <span className="co">{e.company}</span>
-                <span className="exp-sep">—</span>
                 <span className="exp-role-text">{e.role}</span>
+                <span className="exp-sep" aria-hidden>·</span>
+                <span className="co">{e.company}</span>
               </h4>
               <p className="exp-desc">{e.desc}</p>
             </div>
-          </li>
+          </div>
         ))}
-      </ol>
+      </div>
     </section>
   );
 }

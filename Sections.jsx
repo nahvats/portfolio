@@ -64,34 +64,42 @@ function Hero({ onPrimaryCta, onSecondaryCta }) {
 function Work() {
   return (
     <section id="work" className="container section">
-      <SectionHead eyebrow="WORK" num="03" title="Past projects" count={PROJECTS.length} />
-      <div className="projects-grid">
+      <SectionHead eyebrow="WORK" num="03" title="Past projects" />
+      <ul className="proj-list">
         {PROJECTS.map((p, i) => {
           const inner = (
             <React.Fragment>
-              <div className="pc-num-row">
-                <span className="pc-num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="pc-id">{p.id}</span>
-                {p.private && <span className="pc-private">private</span>}
-              </div>
-              <div className="pc-head">
-                <span className="pc-title">{p.title}</span>
-                <span className="pc-year">{p.year}</span>
-              </div>
-              <p className="pc-desc">{p.summary}</p>
-              <div className="pc-foot">
-                <div className="pc-tags">
-                  {p.tags.map(t => <Tag key={t}>{t}</Tag>)}
+              <span className="proj-idx">{String(i + 1).padStart(2, '0')}</span>
+              <div className="proj-body">
+                <div className="proj-row">
+                  <h3 className="proj-title">
+                    {p.title}
+                    {p.private && <span className="proj-lock" title="private repo">·  private</span>}
+                  </h3>
+                  <span className="proj-year">{p.year}</span>
                 </div>
-                {!p.private && <span className="pc-arr">→</span>}
+                <p className="proj-desc">{p.summary}</p>
+                <div className="proj-tags">
+                  {p.tags.map((t, idx) => (
+                    <React.Fragment key={t}>
+                      <span>{t}</span>
+                      {idx < p.tags.length - 1 && <span className="proj-tag-sep">/</span>}
+                    </React.Fragment>
+                  ))}
+                </div>
               </div>
+              {!p.private && <span className="proj-arr" aria-hidden>→</span>}
             </React.Fragment>
           );
-          return p.private
-            ? <div key={p.id} className="project-card pc-no-link">{inner}</div>
-            : <a key={p.id} className="project-card" href={p.href} target="_blank" rel="noopener noreferrer">{inner}</a>;
+          return (
+            <li key={p.id} className={"proj-item" + (p.private ? " is-private" : "")}>
+              {p.private
+                ? <div className="proj-link">{inner}</div>
+                : <a className="proj-link" href={p.href} target="_blank" rel="noopener noreferrer">{inner}</a>}
+            </li>
+          );
         })}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -164,21 +172,26 @@ function About() {
 function Experience() {
   return (
     <section id="experience" className="container section">
-      <SectionHead eyebrow="EXPERIENCE" num="04" title="What I've worked on" count={EXPERIENCE.length} />
-      <div className="exp-list">
+      <SectionHead eyebrow="EXPERIENCE" num="04" title="What I've worked on" />
+      <ol className="exp-timeline">
         {EXPERIENCE.map((e, i) => (
-          <div key={i} className="exp-item">
-            <span className="exp-year">{e.year}</span>
-            <div>
-              <h4 className="exp-role">
-                {e.role} <span className="exp-sep">/</span> <span className="co">{e.company}</span>
+          <li key={i} className="exp-row">
+            <span className="exp-dot" aria-hidden></span>
+            <div className="exp-meta">
+              <span className="exp-year">{e.year}</span>
+              <span className="exp-loc">{e.loc}</span>
+            </div>
+            <div className="exp-body">
+              <h4 className="exp-head">
+                <span className="co">{e.company}</span>
+                <span className="exp-sep">—</span>
+                <span className="exp-role-text">{e.role}</span>
               </h4>
               <p className="exp-desc">{e.desc}</p>
             </div>
-            <span className="exp-loc">{e.loc}</span>
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }

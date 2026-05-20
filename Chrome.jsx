@@ -52,7 +52,7 @@ function Footer() {
   );
 }
 
-function SectionHead({ eyebrow, num, title, count }) {
+function SectionHead({ eyebrow, num, title }) {
   return (
     <div className="section-head">
       <span className="section-eyebrow">
@@ -60,7 +60,6 @@ function SectionHead({ eyebrow, num, title, count }) {
       </span>
       <span className="section-divider" aria-hidden></span>
       <h2 className="section-title">{title}</h2>
-      {count !== undefined && <span className="section-count">{count} total</span>}
     </div>
   );
 }

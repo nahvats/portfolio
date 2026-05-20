@@ -184,6 +184,7 @@ function Experience() {
               </h4>
               <p className="exp-desc">{e.desc}</p>
             </div>
+            <span className="exp-loc-right">{e.loc}</span>
           </div>
         ))}
       </div>

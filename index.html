@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Nahush Shrivatsa</title>
+<link rel="icon" type="image/png" href="./logo.png" />
 <link rel="stylesheet" href="./colors_and_type.css" />
 <style>
   /* Page chrome ----------------------------------------------------- */
@@ -28,7 +29,19 @@
   }
   .nav.scrolled { border-bottom-color: var(--border-1); }
   .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 100%; }
-  .brand { font-family: var(--font-sans); font-weight: 500; font-size: 16px; color: var(--fg-1); text-decoration: none; cursor: pointer; }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--font-sans); font-weight: 500; font-size: 16px;
+    color: var(--fg-1); text-decoration: none; cursor: pointer;
+  }
+  .brand-logo {
+    width: 26px; height: 26px;
+    object-fit: contain;
+    filter: invert(1);
+    transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease);
+  }
+  .brand:hover .brand-logo { transform: rotate(45deg); }
+  .brand-text { display: inline-flex; align-items: baseline; }
   .brand .dot { color: var(--accent); }
   .nav-links { display: flex; gap: 28px; }
   .nav-links a {

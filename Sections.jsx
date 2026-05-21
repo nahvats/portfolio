@@ -132,21 +132,24 @@ function About() {
       <div className="about-grid">
         <div className="about-prose">
           <p>
-            I'm Nahush — a research engineer based in {PROFILE.location}. I work mostly at the
+            I'm Nahush. A research engineer based in {PROFILE.location}. I work mostly at the
             overlap of <span className="hot">algorithms, systems, and AI</span>, focusing on
             building reliable and optimized Machine Learning infrastructure that can bring transformational change to society.
           </p>
           <p>
-            Right now, I'm part of the <a href="https://www.takayabe.net/" target="_blank" rel="noopener noreferrer">RUN Lab</a> at NYU CUSP, where I'm building Agent Based Models (ABMs)
-            to simulate and study how recommender systems affect city dynamics. I'm also on the real-time
-            applications team at NYU's High Speed Research Network, developing closed loop computational pipelines
-            for neuroscience experiments. Before that I was
-            studying motor-cortex neural activity with RNNs at UW's <a href="https://homes.cs.washington.edu/~mgolub/" target="_blank" rel="noopener noreferrer">Golub Lab</a>, writing firmware and building systems on
-            a tunnel boring machine, and interning across Nokia, Jacobs, and techcarrot in Dubai.
+            Right now, I'm part of the <a href="https://www.takayabe.net/" target="_blank" rel="noopener noreferrer">RUN Lab</a> at NYU CUSP, 
+            where I'm helping build Agent Based Models (ABMs) to simulate and study how recommender systems affect city dynamics. I'm also on the real-time
+            applications team at NYU's High Speed Research Network, developing real-time high throughput computational pipelines for researchers. 
           </p>
           <p>
-            Outside of work, I run a self-hosted home server (best hobby ever!). I am also a marathon 
-            runner (x2) and have a deep love for traveling and exploring new cultures. Apart from Math, I'm very interested in History and Philosophy and finding the unity between all of us.
+            Before that, I was studying rapid learning in the brain for motor tasks with RNNs at UW's <a href="https://homes.cs.washington.edu/~mgolub/" target="_blank" rel="noopener noreferrer">Golub Lab</a>.
+            Additionally, I was the lead software engineer at Washington Tunneling, 
+            where I wrote the firmware from scratch for our <a href="https://www.linkedin.com/posts/washingtontunneling_world-champions-washington-tunneling-ugcPost-7315528384686497792-85pM" target="_blank" rel="noopener noreferrer">TBM</a>, along with the assosciated backend and GUI.
+            Previously, I have interned at Jacobs, Nokia and techcarrot as a Software Engineer and Data Analyst in Dubai.
+          </p>
+          <p>
+            Outside of work, I run a self-hosted home server, which is currently powering this website! I am also a marathon runner (x2) and have a deep love
+            for traveling and exploring new cultures. Apart from Math, I'm very interested in History and Philosophy and finding a common unity across communities.
           </p>
         </div>
         <aside className="about-sidecard">

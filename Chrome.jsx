@@ -21,7 +21,7 @@ function Nav({ active, onNav, onHome }) {
     <nav className={"nav" + (scrolled ? " scrolled" : "")}>
       <div className="container nav-inner">
         <a className="brand" onClick={onHome} aria-label={PROFILE.name}>
-          <img src="./logo.png" alt="" className="brand-logo" />
+          <img src="./logo.jpg" alt="" className="brand-logo" />
           <span className="brand-text">{PROFILE.initial}<span className="dot">.</span></span>
         </a>
         <div className="nav-links">

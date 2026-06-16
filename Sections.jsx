@@ -32,11 +32,6 @@ function Hero({ onPrimaryCta, onSecondaryCta }) {
         {!done && <div className="boot-line is-cmd"><span className="caret">▍</span></div>}
       </div>
 
-      <div className={"hero-eyebrow" + (done ? " in" : "")}>
-        <span className="live-dot"></span>
-        <span>AVAILABLE · Q3 2026 · NYC</span>
-      </div>
-
       <h1 className={"hero-name" + (done ? " in" : "")}>
         Hi, I'm <span className="em">Nahush</span>.
         <span className="cursor" aria-hidden></span>

@@ -46,7 +46,7 @@ function Hero({ onPrimaryCta, onSecondaryCta }) {
 
           <p className={"hero-sub" + (done ? " in" : "")}>
             I take apart ML algorithms and build the infrastructure that runs them. 
-            Currently in <b><span className="acc">New York</span></b>, developing
+            Currently in <b><span className="acc">New York</span></b>, I am developing
             large-scale agent-based models, grounded in real mobility data, to 
             study how city-wide patterns emerge from individual behavior.
           </p>
@@ -98,7 +98,7 @@ function EduCard({ e }) {
         {bannerOk && (
           <img src={e.banner} alt="" onError={() => setBannerOk(false)} />
         )}
-        <LogoTile src={e.logo} mark={e.mark} className="edu-logo" />
+        <LogoTile src={e.logo} mark={e.mark} bleed={e.logoBleed} className="edu-logo" />
       </div>
       <div className="edu-body">
         <h3 className="edu-degree">{e.degree}</h3>
@@ -222,8 +222,8 @@ function Contact() {
         Want to <em>build something</em> together?
       </h2>
       <p className="contact-sub">
-        Open to research collaborations, infra and systems work, and the occasional
-        weird side project. Email is the fastest way to reach me.
+        Open to new opportunities and collaborations, especially ones with interesting
+        problems attached. Say hi over email!
       </p>
       <div className="contact-links">
         <a href={"mailto:" + PROFILE.email}>→ {PROFILE.email}</a>

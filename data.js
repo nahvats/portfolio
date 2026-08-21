@@ -31,6 +31,7 @@ const EDUCATION = [
     school: "New York University",
     mark: "NYU",
     logo: "./assets/logos/nyu.png",
+    logoBleed: true,   // filled purple square; fills the tile edge to edge
     banner: "./assets/campus/nyu.jpg",
     degree: "M.S. Computer Science",
     years: "2025 — 2027",
@@ -41,6 +42,7 @@ const EDUCATION = [
     school: "University of Washington",
     mark: "UW",
     logo: "./assets/logos/uw.png",
+    logoBleed: true,   // already a full-bleed square icon; no inset needed
     banner: "./assets/campus/uw.jpg",
     degree: "B.S. Computer Science",
     years: "2021 — 2025",
@@ -117,7 +119,7 @@ const PROJECTS = [
     id: "home-server",
     title: "Home Server",
     year: "2025",
-    summary: "Self-hosted multi-service stack running 15+ Docker containers across isolated networks with zero-trust remote access. Currently serving this site.",
+    summary: "Self-hosted multi-service stack running 15+ Docker containers across isolated domains with zero-trust remote access. Currently hosting this site!",
     tags: ["Docker", "WireGuard", "Tailscale"],
     href: "https://github.com/nahushvatsa",
   },

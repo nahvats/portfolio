@@ -70,7 +70,9 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="container footer-inner">
-        <span>© 2026 {PROFILE.short} · press <kbd>?</kbd> for a shell</span>
+        <span>
+          © 2026 {PROFILE.name} · self-hosted with <span className="footer-heart">♥</span> from New York
+        </span>
         <div className="footer-right">
           <a href={PROFILE.githubUrl} target="_blank" rel="noopener noreferrer">github ↗</a>
           <a href={PROFILE.linkedinUrl} target="_blank" rel="noopener noreferrer">linkedin ↗</a>
@@ -94,11 +96,13 @@ function SectionHead({ cmd, num }) {
 
 
 
-/* Square brand tile. Falls back to a monogram when the image is absent. */
-function LogoTile({ src, mark, className }) {
+/* Square brand tile. Falls back to a monogram when the image is absent.
+   `bleed` is for logos that already fill their own square (app-icon style):
+   they run edge to edge instead of being inset inside the tile. */
+function LogoTile({ src, mark, className, bleed }) {
   const [ok, setOk] = React.useState(Boolean(src));
   return (
-    <span className={"logo-tile" + (className ? " " + className : "")}>
+    <span className={"logo-tile" + (bleed ? " is-bleed" : "") + (className ? " " + className : "")}>
       {ok
         ? <img src={src} alt="" onError={() => setOk(false)} />
         : <span className="logo-mark">{mark}</span>}

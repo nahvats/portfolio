@@ -1,16 +1,20 @@
 // app.jsx — root component, scroll-spy, terminal easter egg, theme cycle, snake, konami CRT
 const { useState, useEffect, useRef, useCallback } = React;
 
-const NAV_IDS = ['about', 'now', 'work', 'experience', 'contact'];
+const NAV_IDS = ['education', 'experience', 'projects', 'contact'];
 const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 
 /* ============================================================ */
-/*  Theme — apply CSS vars on :root, persist to localStorage    */
+/*  Accent theme — CSS vars on :root, persisted                 */
 /* ============================================================ */
-function applyTheme(id) {
+/* --accent-glow and --accent-soft are derived from --accent with color-mix
+   in the stylesheet, so only --accent needs setting here. --accent-bright
+   stays on the dark value: the terminal is dark in both modes. */
+function applyTheme(id, mode) {
   const t = THEMES.find(x => x.id === id) || THEMES[0];
-  document.documentElement.style.setProperty('--accent', t.accent);
-  document.documentElement.style.setProperty('--accent-glow', t.glow);
+  const root = document.documentElement;
+  root.style.setProperty('--accent', mode === 'light' ? t.accentLight : t.accent);
+  root.style.setProperty('--accent-bright', t.accent);
   try { localStorage.setItem('nahush.theme', t.id); } catch {}
   return t;
 }
@@ -23,9 +27,29 @@ function loadStoredTheme() {
 }
 
 /* ============================================================ */
+/*  Light / dark mode                                           */
+/* ============================================================ */
+/* The inline script in index.html already set data-mode before paint;
+   read it back rather than recomputing, so the two never disagree. */
+function loadStoredMode() {
+  const attr = document.documentElement.getAttribute('data-mode');
+  if (attr === 'light' || attr === 'dark') return attr;
+  try {
+    const m = localStorage.getItem('nahush.mode');
+    if (m === 'light' || m === 'dark') return m;
+  } catch {}
+  return 'light';  // default; matches the pre-paint script in index.html
+}
+function applyMode(mode) {
+  document.documentElement.setAttribute('data-mode', mode);
+  try { localStorage.setItem('nahush.mode', mode); } catch {}
+  return mode;
+}
+
+/* ============================================================ */
 /*  Snake — playable inside the terminal body                   */
 /* ============================================================ */
-function SnakeGame({ onExit, onMessage }) {
+function SnakeGame({ onExit }) {
   const COLS = 28, ROWS = 14;
   const [snake, setSnake] = useState([{x: 14, y: 7}, {x: 13, y: 7}, {x: 12, y: 7}]);
   const [dir, setDir] = useState({x: 1, y: 0});
@@ -142,13 +166,14 @@ const TERMINAL_HELP = [
   "open resume       — opens resume pdf",
   "contact           — show contact info",
   "theme [name]      — cycle accent, or set: blue/lime/coral/amber/teal",
+  "mode [light|dark] — switch appearance (or just: light / dark)",
   "snake             — play snake (arrows or wasd, esc to quit)",
   "konami            — hint for a secret",
   "clear             — clear the screen",
   "exit              — close terminal (or press esc)",
 ];
 
-function Terminal({ open, onClose, onNav, onTheme, currentTheme }) {
+function Terminal({ open, onClose, onNav, onTheme, currentTheme, onMode, currentMode }) {
   const [history, setHistory] = useState([
     { type: 'sys', text: "nahush.sh — interactive shell" },
     { type: 'sys', text: "type `help` to see commands · esc to close" },
@@ -157,6 +182,85 @@ function Terminal({ open, onClose, onNav, onTheme, currentTheme }) {
   const [game, setGame] = useState(null); // 'snake' or null
   const inputRef = useRef(null);
   const scrollRef = useRef(null);
+
+  /* --- Dragging ------------------------------------------------------
+     Offset from the overlay's centred resting position. Lives on a
+     wrapper rather than .term itself, so it can't fight the pop-in
+     animation (a CSS animation on transform beats an inline style). */
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const [minimized, setMinimized] = useState(false);
+  const [maximized, setMaximized] = useState(false);
+  const shellRef = useRef(null);
+  const dragRef = useRef(null);
+  const movedRef = useRef(false);   // suppresses the overlay's close-on-click
+
+  const EDGE = 48;  // px of window that must stay on screen
+
+  const onDragStart = (e) => {
+    if (e.button !== 0) return;               // primary button / touch only
+    const el = shellRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    dragRef.current = {
+      sx: e.clientX, sy: e.clientY,
+      ox: pos.x, oy: pos.y,
+      // rect minus the current offset = where it sits with no transform
+      baseLeft: r.left - pos.x, baseTop: r.top - pos.y,
+      w: r.width, h: r.height,
+    };
+    movedRef.current = false;
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    e.preventDefault();                        // don't select the title text
+  };
+
+  const onDragMove = (e) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const dx = e.clientX - d.sx;
+    const dy = e.clientY - d.sy;
+    if (!movedRef.current && Math.abs(dx) + Math.abs(dy) > 3) movedRef.current = true;
+    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+    setPos({
+      // keep at least EDGE px of the window within the viewport
+      x: clamp(d.ox + dx, EDGE - d.baseLeft - d.w, window.innerWidth - EDGE - d.baseLeft),
+      // never let the title bar go above the top, or it can't be grabbed back
+      y: clamp(d.oy + dy, -d.baseTop, window.innerHeight - EDGE - d.baseTop),
+    });
+  };
+
+  const onDragEnd = (e) => {
+    if (!dragRef.current) return;
+    dragRef.current = null;
+    setDragging(false);
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    // Stay armed just long enough to swallow this gesture's click, then
+    // re-arm — otherwise the next genuine backdrop click gets eaten too.
+    setTimeout(() => { movedRef.current = false; }, 0);
+  };
+
+  const recenter = () => setPos({ x: 0, y: 0 });
+
+  // A drag that ends over the backdrop shouldn't count as a click-to-close.
+  const onOverlayClick = () => {
+    if (movedRef.current) return;
+    onClose();
+  };
+
+  /* Window controls. stopPropagation on pointerdown keeps a button press
+     from also starting a drag on the title bar underneath. */
+  const swallowDrag = (e) => e.stopPropagation();
+  const toggleMin = () => { setMinimized(v => !v); setMaximized(false); };
+  const toggleMax = () => {
+    setMaximized(v => {
+      if (!v) setPos({ x: 0, y: 0 });   // re-centre as it grows
+      return !v;
+    });
+    setMinimized(false);
+  };
 
   useEffect(() => {
     if (open && !game) setTimeout(() => inputRef.current?.focus(), 50);
@@ -185,13 +289,13 @@ function Terminal({ open, onClose, onNav, onTheme, currentTheme }) {
       case 'whoami':
         print([
           "nahush shrivatsa",
-          "  role     research engineer @ nyu hsrn",
+          "  role     researcher and engineer @ nyu hsrn",
           "  loc      new york city",
           "  focus    algorithms · systems · ai",
         ]);
         break;
       case 'ls':
-        print(["about/  now/  work/  experience/  contact/"]);
+        print(["education/  experience/  projects/  contact/"]);
         break;
       case 'cd':
         if (NAV_IDS.includes(arg)) {
@@ -205,11 +309,11 @@ function Terminal({ open, onClose, onNav, onTheme, currentTheme }) {
         if (arg === 'resume.txt' || arg === 'resume') {
           print([
             "─── nahush_shrivatsa.resume ───────────────",
-            "now      research engineer · nyu hsrn",
+            "now      researcher + engineer · nyu hsrn",
             "prev     golub lab · washington tunneling",
             "         nokia · jacobs · techcarrot",
-            "stack    python · c++ · ts · pytorch · rust",
-            "         docker · slurm · paxos · embedded",
+            "stack    python · C++ · java · pytorch · ts",
+            "         docker · SQL · linux",
             "─────────────────────────────────────────",
           ]);
         } else {
@@ -262,6 +366,19 @@ function Terminal({ open, onClose, onNav, onTheme, currentTheme }) {
       case 'theme?':
         print(`current theme: ${THEMES.find(t => t.id === currentTheme)?.name || 'unknown'}`);
         break;
+      case 'mode':
+      case 'light':
+      case 'dark': {
+        const verb = head.toLowerCase();
+        let next;
+        if (verb === 'light' || verb === 'dark') next = verb;
+        else if (arg === 'light' || arg === 'dark') next = arg;
+        else if (arg === '' || arg === 'toggle') next = currentMode === 'dark' ? 'light' : 'dark';
+        else { print(`mode: unknown '${arg}'. try: mode light | mode dark | mode`); break; }
+        onMode(next);
+        print(`✓ ${next} mode`);
+        break;
+      }
       case 'sudo':
         print(`sudo: ${arg}: command not found`);
         break;
@@ -287,49 +404,77 @@ function Terminal({ open, onClose, onNav, onTheme, currentTheme }) {
   if (!open) return null;
 
   return (
-    <div className="term-overlay" onClick={onClose}>
-      <div className="term" onClick={e => e.stopPropagation()}>
-        <div className="term-head">
-          <div className="term-dots">
-            <span style={{background:'#ff5f56'}}></span>
-            <span style={{background:'#ffbd2e'}}></span>
-            <span style={{background:'#27c93f'}}></span>
-          </div>
-          <div className="term-title">~/nahush — zsh{game === 'snake' ? ' · snake' : ''}</div>
-          <div style={{width: 60}}></div>
-        </div>
-
-        {game === 'snake' ? (
-          <div className="term-body">
-            <SnakeGame onExit={() => { setGame(null); print('snake exited.'); }} />
-          </div>
-        ) : (
-          <div className="term-body" ref={scrollRef}>
-            {history.map((h, i) => {
-              if (h.type === 'cmd')
-                return <div key={i} className="term-line term-cmd"><span className="term-prompt">~/nahush $</span> {h.text}</div>;
-              if (h.type === 'sys')
-                return <div key={i} className="term-line term-sys">{h.text}</div>;
-              return <div key={i} className="term-line">{h.text}</div>;
-            })}
-            <div className="term-line term-input-line">
-              <span className="term-prompt">~/nahush $</span>
-              <input
-                ref={inputRef}
-                className="term-input"
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') { run(input); setInput(""); }
-                  if (e.key === 'Escape') onClose();
-                }}
-                spellCheck={false}
-                autoComplete="off"
-              />
-              <span className="term-caret">▍</span>
+    <div className="term-overlay" onClick={onOverlayClick}>
+      <div
+        ref={shellRef}
+        className={"term-shell" + (dragging ? " is-dragging" : "")}
+        style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+      >
+        <div className="term" onClick={e => e.stopPropagation()}>
+          <div
+            className="term-head"
+            onPointerDown={onDragStart}
+            onPointerMove={onDragMove}
+            onPointerUp={onDragEnd}
+            onPointerCancel={onDragEnd}
+            onDoubleClick={recenter}
+            title="Drag to move · double-click to re-center"
+          >
+            <div className="term-dots">
+              <button
+                className="term-dot term-dot-close"
+                onPointerDown={swallowDrag} onClick={onClose}
+                aria-label="Close terminal" title="Close"
+              ><span aria-hidden>×</span></button>
+              <button
+                className="term-dot term-dot-min"
+                onPointerDown={swallowDrag} onClick={toggleMin}
+                aria-label={minimized ? 'Restore terminal' : 'Minimize terminal'}
+                title={minimized ? 'Restore' : 'Minimize'}
+              ><span aria-hidden>{minimized ? '+' : '−'}</span></button>
+              <button
+                className="term-dot term-dot-max"
+                onPointerDown={swallowDrag} onClick={toggleMax}
+                aria-label={maximized ? 'Restore terminal size' : 'Maximize terminal'}
+                title={maximized ? 'Restore' : 'Maximize'}
+              ><span aria-hidden>{maximized ? '⤡' : '⤢'}</span></button>
             </div>
+            <div className="term-title">~/nahush — zsh{game === 'snake' ? ' · snake' : ''}</div>
+            <div style={{width: 60}}></div>
           </div>
-        )}
+
+          {game === 'snake' ? (
+            <div className="term-body">
+              <SnakeGame onExit={() => { setGame(null); print('snake exited.'); }} />
+            </div>
+          ) : (
+            <div className="term-body" ref={scrollRef}>
+              {history.map((h, i) => {
+                if (h.type === 'cmd')
+                  return <div key={i} className="term-line term-cmd"><span className="term-prompt">~/nahush $</span> {h.text}</div>;
+                if (h.type === 'sys')
+                  return <div key={i} className="term-line term-sys">{h.text}</div>;
+                return <div key={i} className="term-line">{h.text}</div>;
+              })}
+              <div className="term-line term-input-line">
+                <span className="term-prompt">~/nahush $</span>
+                <input
+                  ref={inputRef}
+                  className="term-input"
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') { run(input); setInput(""); }
+                    if (e.key === 'Escape') onClose();
+                  }}
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+                <span className="term-caret">▍</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -351,21 +496,34 @@ function CrtBanner({ onExit, secondsLeft }) {
 /*  App root                                                     */
 /* ============================================================ */
 function App() {
-  const [active, setActive] = useState('about');
+  const [active, setActive] = useState('education');
   const [termOpen, setTermOpen] = useState(false);
   const [theme, setTheme] = useState(THEMES[0].id);
+  const [mode, setMode] = useState(loadStoredMode);
   const [crt, setCrt] = useState(false);
   const [crtLeft, setCrtLeft] = useState(30);
   const konamiRef = useRef([]);
 
-  // Apply theme on mount + when changed
+  // Restore accent + mode on mount
   useEffect(() => {
     const id = loadStoredTheme();
+    const m = loadStoredMode();
     setTheme(id);
-    applyTheme(id);
+    setMode(m);
+    applyMode(m);
+    applyTheme(id, m);
   }, []);
 
-  const changeTheme = (id) => { setTheme(id); applyTheme(id); };
+  const changeTheme = (id) => { setTheme(id); applyTheme(id, mode); };
+
+  // Accent brightness depends on mode, so re-apply when the mode flips.
+  const changeMode = (next) => {
+    setMode(next);
+    applyMode(next);
+    applyTheme(theme, next);
+  };
+  const toggleMode = () => changeMode(mode === 'dark' ? 'light' : 'dark');
+
 
   // Scroll-spy
   useEffect(() => {
@@ -451,16 +609,16 @@ function App() {
 
   return (
     <React.Fragment>
-      <Nav active={active} onNav={goSection} onHome={goHome} />
+      <Nav active={active} onNav={goSection} onHome={goHome}
+           mode={mode} onToggleMode={toggleMode} />
       <main>
         <Hero
-          onPrimaryCta={() => goSection('work')}
+          onPrimaryCta={() => goSection('projects')}
           onSecondaryCta={() => goSection('contact')}
         />
-        <About />
-        <NowSection />
-        <Work />
+        <Education />
         <Experience />
+        <Projects />
         <Contact />
         <Footer />
       </main>
@@ -470,6 +628,8 @@ function App() {
         onNav={goSection}
         onTheme={changeTheme}
         currentTheme={theme}
+        onMode={changeMode}
+        currentMode={mode}
       />
       <button className="term-fab" onClick={() => setTermOpen(true)} aria-label="open terminal">
         <span className="term-fab-prompt">$_</span>

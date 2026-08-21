@@ -11,3 +11,9 @@ caddy_data/
 # Env files (if you ever add secrets)
 .env
 .env.*
+
+# Untouched source for me.jpg (4.4MB) — the cropped version is committed
+assets/me-original.jpg
+
+# Full-res campus sources — the sized .jpg versions are what ship
+assets/campus/*.png

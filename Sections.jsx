@@ -1,88 +1,196 @@
-// Sections.jsx — Hero, Work, Now, About, Experience, GitHub, Writing, Contact
-const { useState: useStateS, useEffect: useEffectS, useRef: useRefS } = React;
+// Sections.jsx — Hero, Education, Experience, Projects, Contact
+// Hooks are referenced as React.* — these files share one global scope.
 
 /* -------------------------------------------------------------------------
-   Hero — terminal boot lines type out, then the display name lands.
+   Hero — boot lines type out, the name lands, photo sits in a window frame.
    ------------------------------------------------------------------------- */
 function Hero({ onPrimaryCta, onSecondaryCta }) {
-  const [typed, setTyped] = useStateS([]);
-  const [done, setDone] = useStateS(false);
+  const [typed, setTyped] = React.useState([]);
+  const [done, setDone] = React.useState(false);
+  const [imgOk, setImgOk] = React.useState(true);
 
-  useEffectS(() => {
-    let timeouts = [];
-    let delay = 220;
+  React.useEffect(() => {
+    const timeouts = [];
+    let delay = 160;
     BOOT_LINES.forEach((line) => {
-      timeouts.push(setTimeout(() => {
-        setTyped(prev => [...prev, line]);
-      }, delay));
-      delay += 280 + Math.min(line.text.length * 12, 350);
+      timeouts.push(setTimeout(() => setTyped(prev => [...prev, line]), delay));
+      delay += 180 + Math.min(line.text.length * 6, 200);
     });
     timeouts.push(setTimeout(() => setDone(true), delay));
     return () => timeouts.forEach(clearTimeout);
   }, []);
 
   return (
-    <section id="hero" className="container narrow hero">
+    <section id="hero" className="container hero">
       <div className="hero-glow" aria-hidden></div>
 
-      <div className="hero-boot" aria-hidden>
-        {typed.map((l, i) => (
-          <div key={i} className={"boot-line" + (l.cmd ? " is-cmd" : "")}>{l.text}</div>
-        ))}
-        {!done && <div className="boot-line is-cmd"><span className="caret">▍</span></div>}
-      </div>
+      <div className="hero-grid">
+        <div className="hero-left">
+          <div className="hero-boot" aria-hidden>
+            {typed.map((l, i) => (
+              <div key={i} className={"boot-line" + (l.cmd ? " is-cmd" : "")}>{l.text}</div>
+            ))}
+            {!done && <div className="boot-line is-cmd"><span className="caret">▍</span></div>}
+          </div>
 
-      <h1 className={"hero-name" + (done ? " in" : "")}>
-        Hi, I'm <span className="em">Nahush</span>.
-        <span className="cursor" aria-hidden></span>
-      </h1>
+          <h1 className={"hero-name" + (done ? " in" : "")}>
+            Hi, I'm <span className="em">Nahush</span>.
+            <span className="cursor" aria-hidden></span>
+          </h1>
 
-      <p className={"hero-sub" + (done ? " in" : "")}>
-        Research engineer in <span className="acc">New York</span>, working on urban resilience simulations and real-time
-        pipelines for neural imaging at NYU. I like building things that scale and last: from 
-        <span className="hot"> ml infra</span> to <span className="hot">embedded firmware</span>
-        , and the occasional home-lab rabbit hole.
-      </p>
+          <p className={"hero-sub" + (done ? " in" : "")}>
+            Research engineer in <span className="acc">New York</span>, building real-time
+            pipelines for neural imaging and large-scale simulations of city dynamics.
+          </p>
 
-      <div className={"hero-ctas" + (done ? " in" : "")}>
-        <button className="btn btn-primary" onClick={onPrimaryCta}>see projects →</button>
-        <button className="btn btn-ghost" onClick={onSecondaryCta}>say hello</button>
-        <span className="hero-hint">press <kbd>?</kbd> for shortcuts</span>
+          <div className={"hero-ctas" + (done ? " in" : "")}>
+            <button className="btn btn-primary" onClick={onPrimaryCta}>see projects →</button>
+            <button className="btn btn-ghost" onClick={onSecondaryCta}>say hello</button>
+            <span className="hero-hint">press <kbd>?</kbd> for a shell</span>
+          </div>
+        </div>
+
+        <div className={"hero-right" + (done ? " in" : "")}>
+          <figure className="photo-frame">
+            <figcaption className="photo-head">
+              <span className="photo-dots" aria-hidden>
+                <span style={{background:'#ff5f56'}}></span>
+                <span style={{background:'#ffbd2e'}}></span>
+                <span style={{background:'#27c93f'}}></span>
+              </span>
+              <span className="photo-title">~/nahush/me.jpg</span>
+            </figcaption>
+            <div className="photo-body">
+              {imgOk ? (
+                <img src={PROFILE.photo} alt={PROFILE.name} onError={() => setImgOk(false)} />
+              ) : (
+                <div className="photo-fallback">
+                  <div className="pf-err">me.jpg: no such file</div>
+                  <div>drop a portrait at</div>
+                  <div className="pf-key">./me.jpg</div>
+                </div>
+              )}
+            </div>
+          </figure>
+        </div>
       </div>
     </section>
   );
 }
 
 /* -------------------------------------------------------------------------
-   Work — clicking a card opens the GitHub repo in a new tab.
+   Education — campus banner, brand tile, coursework.
+   Banner and logo are optional; both degrade to designed placeholders.
    ------------------------------------------------------------------------- */
-function Work() {
+function EduCard({ e }) {
+  const [bannerOk, setBannerOk] = React.useState(Boolean(e.banner));
   return (
-    <section id="work" className="container section">
-      <SectionHead eyebrow="WORK" num="03" title="Past projects" />
-      <div className="proj-stack">
-        {PROJECTS.map((p, i) => {
+    <article className="edu-card">
+      <div className="edu-banner">
+        {bannerOk && (
+          <img src={e.banner} alt="" onError={() => setBannerOk(false)} />
+        )}
+        <LogoTile src={e.logo} mark={e.mark} className="edu-logo" />
+      </div>
+      <div className="edu-body">
+        <h3 className="edu-degree">{e.degree}</h3>
+        <div className="edu-school">{e.school}</div>
+        <div className="edu-meta">
+          <span>{e.years}</span>
+          <span className="edu-dot" aria-hidden>·</span>
+          <span>{e.loc}</span>
+        </div>
+        {e.did && <p className="edu-did">{e.did}</p>}
+      </div>
+    </article>
+  );
+}
+
+function Education() {
+  return (
+    <section id="education" className="container section">
+      <SectionHead cmd="cat education.md" num="01" />
+      <div className="edu-grid">
+        {EDUCATION.map((e, i) => <EduCard key={i} e={e} />)}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Experience — timeline rail with a brand tile per role. Current roles get
+   a quiet status chip. Older roles collapse behind a toggle.
+   ------------------------------------------------------------------------- */
+const EXP_VISIBLE = 3;
+
+function Experience() {
+  const [expanded, setExpanded] = React.useState(false);
+  const hidden = EXPERIENCE.length - EXP_VISIBLE;
+  const shown = expanded ? EXPERIENCE : EXPERIENCE.slice(0, EXP_VISIBLE);
+
+  return (
+    <section id="experience" className="container section">
+      <SectionHead cmd="cat experience.log" num="02" />
+
+      <ol className="xp">
+        {shown.map((e, i) => (
+          <li key={i} className={"xp-row" + (e.current ? " is-current" : "")}>
+            <div className="xp-when">
+              <span className="xp-year">{e.year}</span>
+              {e.current && <span className="xp-chip">Current</span>}
+            </div>
+            <div className="xp-body">
+              <h3 className="xp-role">{e.role}</h3>
+              <div className="xp-meta">
+                <span className="xp-co">{e.company}</span>
+                <span className="xp-sep" aria-hidden>—</span>
+                <span className="xp-loc">{e.loc}</span>
+              </div>
+              <p className="xp-desc">{e.desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      {hidden > 0 && (
+        <div className="xp-more">
+          <button onClick={() => setExpanded(v => !v)}>
+            {expanded ? "Show less" : `Show ${hidden} earlier role${hidden > 1 ? "s" : ""}`}
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------
+   Projects — clicking a card opens the GitHub repo in a new tab.
+   ------------------------------------------------------------------------- */
+function Projects() {
+  return (
+    <section id="projects" className="container section">
+      <SectionHead cmd="ls ./projects" num="03" />
+      <div className="proj-grid">
+        {PROJECTS.map((p) => {
           const inner = (
             <React.Fragment>
               <div className="proj-top">
-                <div className="proj-head">
-                  <span className="proj-dot" aria-hidden></span>
+                <div className="proj-name">
                   <h3 className="proj-title">{p.title}</h3>
-                  {p.private && <span className="proj-badge">private</span>}
+                  {p.private
+                    ? <span className="proj-badge">private</span>
+                    : <span className="proj-ext" aria-hidden>↗</span>}
                 </div>
                 <span className="proj-year">{p.year}</span>
               </div>
               <p className="proj-desc">{p.summary}</p>
-              <div className="proj-foot">
-                <div className="proj-tags">
-                  {p.tags.map((t, idx) => (
-                    <React.Fragment key={t}>
-                      <span className="proj-tag">{t}</span>
-                      {idx < p.tags.length - 1 && <span className="proj-tag-sep" aria-hidden>·</span>}
-                    </React.Fragment>
-                  ))}
-                </div>
-                {!p.private && <span className="proj-arr" aria-hidden>→</span>}
+              <div className="proj-tags">
+                {p.tags.map((t, idx) => (
+                  <React.Fragment key={t}>
+                    {idx > 0 && <span className="pt-sep" aria-hidden>·</span>}
+                    <span>{t}</span>
+                  </React.Fragment>
+                ))}
               </div>
             </React.Fragment>
           );
@@ -96,219 +204,25 @@ function Work() {
 }
 
 /* -------------------------------------------------------------------------
-   Now — what I'm currently doing
-   ------------------------------------------------------------------------- */
-function NowSection() {
-  return (
-    <section id="now" className="container section">
-      <SectionHead eyebrow="NOW" num="02" title="Currently working on" />
-      <div className="now-grid">
-        {NOW.items.map((it, i) => (
-          <div key={i} className={"now-card" + (it.hot ? " now-card-hot" : "")}>
-            <div className="now-label">{it.label}</div>
-            <p className="now-text">{it.text}</p>
-          </div>
-        ))}
-      </div>
-      <div className="now-foot">
-        <span className="meta">// last updated {NOW.updated}</span>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------
-   About — bio + skills sidebar
-   ------------------------------------------------------------------------- */
-function About() {
-  return (
-    <section id="about" className="container section">
-      <SectionHead eyebrow="ABOUT" num="01" title="A bit about me" />
-      <div className="about-grid">
-        <div className="about-prose">
-          <p>
-            I'm Nahush. A research engineer based in {PROFILE.location}. I work mostly at the
-            overlap of <span className="hot">algorithms, systems, and AI</span>, focusing on
-            building reliable and optimized Machine Learning infrastructure that can bring transformational change to society.
-          </p>
-          <p>
-            Right now, I'm part of the <a href="https://www.takayabe.net/" target="_blank" rel="noopener noreferrer">RUN Lab</a> at NYU CUSP, 
-            where I'm helping build Agent Based Models (ABMs) to simulate and study how recommender systems affect city dynamics. I'm also on the real-time
-            applications team at NYU's High Speed Research Network, developing real-time high throughput computational pipelines for researchers. 
-          </p>
-          <p>
-            Before that, I was studying rapid learning in the brain for motor tasks with RNNs at UW's <a href="https://homes.cs.washington.edu/~mgolub/" target="_blank" rel="noopener noreferrer">Golub Lab</a>.
-            Additionally, I was the lead software engineer at Washington Tunneling, 
-            where I wrote the firmware from scratch for our <a href="https://www.linkedin.com/posts/washingtontunneling_world-champions-washington-tunneling-ugcPost-7315528384686497792-85pM" target="_blank" rel="noopener noreferrer">TBM</a>, along with the assosciated backend and GUI.
-            Previously, I have interned at Jacobs, Nokia and techcarrot as a Software Engineer and Data Analyst in Dubai.
-          </p>
-          <p>
-            Outside of work, I run a self-hosted home server, which is currently powering this website! I am also a marathon runner (x2) and have a deep love
-            for traveling and exploring new cultures. Apart from Math, I'm very interested in History and Philosophy and finding a common unity across communities.
-          </p>
-        </div>
-        <aside className="about-sidecard">
-          <h4>// skills</h4>
-          <ul className="about-side-list">
-            {SKILLS.map(([k, v]) => (
-              <li key={k}><span>{k}</span><span>{v}</span></li>
-            ))}
-          </ul>
-        </aside>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------
-   Experience — chronological list with tags
-   ------------------------------------------------------------------------- */
-function Experience() {
-  return (
-    <section id="experience" className="container section">
-      <SectionHead eyebrow="EXPERIENCE" num="04" title="What I've worked on" />
-      <div className="exp-list">
-        {EXPERIENCE.map((e, i) => (
-          <div key={i} className="exp-row">
-            <div className="exp-when">
-              <span className="exp-year">{e.year}</span>
-              <span className="exp-loc">{e.loc}</span>
-            </div>
-            <div className="exp-body">
-              <h4 className="exp-head">
-                <span className="exp-role-text">{e.role}</span>
-                <span className="exp-sep" aria-hidden>·</span>
-                <span className="co">{e.company}</span>
-              </h4>
-              <p className="exp-desc">{e.desc}</p>
-            </div>
-            <span className="exp-loc-right">{e.loc}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------
-   GitHub activity — fake-but-shaped contribution graph + recent commits
-   ------------------------------------------------------------------------- */
-function GitHubActivity() {
-  const cellColor = (v) => {
-    if (v === 0) return 'var(--surface-2)';
-    if (v === 1) return 'rgba(124,140,255,0.22)';
-    if (v === 2) return 'rgba(124,140,255,0.45)';
-    if (v === 3) return 'rgba(124,140,255,0.72)';
-    return 'var(--accent)';
-  };
-
-  return (
-    <section id="github" className="container section">
-      <SectionHead eyebrow="GITHUB" num="05" title="What I've been pushing" />
-
-      <div className="gh-stats">
-        <div className="gh-stat">
-          <div className="gh-stat-val">{GITHUB.contributionsThisYear}</div>
-          <div className="gh-stat-lbl">contributions · last year</div>
-        </div>
-        <div className="gh-stat">
-          <div className="gh-stat-val">{GITHUB.longestStreak}d</div>
-          <div className="gh-stat-lbl">longest streak</div>
-        </div>
-        <div className="gh-stat">
-          <div className="gh-stat-val">{GITHUB.currentStreak}d</div>
-          <div className="gh-stat-lbl">current streak</div>
-        </div>
-        <div className="gh-stat">
-          <div className="gh-stat-val">{GITHUB.starsTotal}</div>
-          <div className="gh-stat-lbl">stars received</div>
-        </div>
-      </div>
-
-      <div className="gh-graph-wrap">
-        <div className="gh-graph">
-          {GITHUB.contributions.map((wk, wi) => (
-            <div key={wi} className="gh-col">
-              {wk.map((v, di) => (
-                <div key={di} className="gh-cell" style={{background: cellColor(v)}} title={`level ${v}`}></div>
-              ))}
-            </div>
-          ))}
-        </div>
-        <div className="gh-legend">
-          <span>less</span>
-          {[0,1,2,3,4].map(v => (
-            <div key={v} className="gh-cell" style={{background: cellColor(v)}}></div>
-          ))}
-          <span>more</span>
-        </div>
-      </div>
-
-      <div className="gh-recent">
-        <h4 className="gh-recent-title">// recent commits</h4>
-        <ul className="gh-commits">
-          {GITHUB.recent.map((c, i) => (
-            <li key={i} className="gh-commit">
-              <span className="gh-commit-repo">{c.repo}</span>
-              <span className="gh-commit-msg">{c.msg}</span>
-              <span className="gh-commit-when">{c.when}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div style={{marginTop: 24}}>
-        <a className="btn btn-ghost" href={PROFILE.githubUrl} target="_blank" rel="noopener noreferrer">
-          full graph on github ↗
-        </a>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------
-   Writing — empty state, deliberately. Section is in nav for when it fills up.
-   ------------------------------------------------------------------------- */
-function Writing() {
-  return (
-    <section id="writing" className="container section">
-      <SectionHead eyebrow="WRITING" num="06" title="Notes & essays" />
-      <div className="writing-empty">
-        <pre className="writing-empty-pre">{`$ ls ./writing
-total 0
-$ # nothing here yet — coming soon
-$ _`}</pre>
-        <p className="writing-empty-note">
-          I'm planning to write up the home-server build, some distributed-systems notes,
-          and a few neural-imaging deep dives once the current sprint settles.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------------------------------------------------------------
-   Contact — big line + link list
+   Contact — big serif line + link list.
    ------------------------------------------------------------------------- */
 function Contact() {
   return (
-    <section id="contact" className="container narrow contact">
-      <span className="section-eyebrow" style={{display: 'block', marginBottom: 24}}>
-        CONTACT <span className="num">— 07</span>
-      </span>
+    <section id="contact" className="container section contact">
+      <SectionHead cmd="./contact.sh" num="04" />
       <h2 className="contact-line">
-        Want to <em>build something</em> with me?
+        Want to <em>build something</em> together?
       </h2>
       <p className="contact-sub">
-        Open to research collaborations, infra/systems contract work, and the occasional
-        weird side project. Probably the fastest way to reach me is email.
+        Open to research collaborations, infra and systems work, and the occasional
+        weird side project. Email is the fastest way to reach me.
       </p>
       <div className="contact-links">
         <a href={"mailto:" + PROFILE.email}>→ {PROFILE.email}</a>
         <a href={PROFILE.githubUrl} target="_blank" rel="noopener noreferrer">→ {PROFILE.github}</a>
         <a href={PROFILE.linkedinUrl} target="_blank" rel="noopener noreferrer">→ {PROFILE.linkedin}</a>
       </div>
-      <div style={{marginTop: 32}}>
+      <div className="contact-cta">
         <a className="btn btn-ghost" href={PROFILE.resumeUrl} target="_blank" rel="noopener noreferrer">
           view resume ↗
         </a>
@@ -317,4 +231,4 @@ function Contact() {
   );
 }
 
-Object.assign(window, { Hero, Work, NowSection, About, Experience, GitHubActivity, Writing, Contact });
+Object.assign(window, { Hero, Education, Experience, Projects, Contact });

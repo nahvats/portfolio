@@ -12,11 +12,13 @@ function Hero({ onPrimaryCta, onSecondaryCta }) {
   React.useEffect(() => {
     const timeouts = [];
     let delay = 160;
-    BOOT_LINES.forEach((line) => {
+    BOOT_LINES.forEach((line, i) => {
       timeouts.push(setTimeout(() => setTyped(prev => [...prev, line]), delay));
-      delay += 180 + Math.min(line.text.length * 6, 200);
+      // Pace each line by how long it would take to "type"; the last one
+      // needs no trailing gap since nothing follows it.
+      if (i < BOOT_LINES.length - 1) delay += 180 + Math.min(line.text.length * 6, 200);
     });
-    timeouts.push(setTimeout(() => setDone(true), delay));
+    timeouts.push(setTimeout(() => setDone(true), delay + 260));
     return () => timeouts.forEach(clearTimeout);
   }, []);
 
@@ -30,7 +32,11 @@ function Hero({ onPrimaryCta, onSecondaryCta }) {
             {typed.map((l, i) => (
               <div key={i} className={"boot-line" + (l.cmd ? " is-cmd" : "")}>{l.text}</div>
             ))}
-            {!done && <div className="boot-line is-cmd"><span className="caret">▍</span></div>}
+            {/* Caret only while lines are still coming — once the last one
+                lands, keeping it would leave a dangling `$` prompt. */}
+            {typed.length < BOOT_LINES.length && (
+              <div className="boot-line is-cmd"><span className="caret">▍</span></div>
+            )}
           </div>
 
           <h1 className={"hero-name" + (done ? " in" : "")}>

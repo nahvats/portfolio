@@ -21,7 +21,6 @@ const PROFILE = {
 const BOOT_LINES = [
   { cmd: true,  text: "whoami" },
   { cmd: false, text: "nahush shrivatsa — researcher and engineer @ nyu" },
-  { cmd: true,  text: "cat ./intro" },
 ];
 
 // Education — TODO(nahush): confirm degrees and dates.

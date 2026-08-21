@@ -39,8 +39,10 @@ function Hero({ onPrimaryCta, onSecondaryCta }) {
           </h1>
 
           <p className={"hero-sub" + (done ? " in" : "")}>
-            Research engineer in <span className="acc">New York</span>, building real-time
-            pipelines for neural imaging and large-scale simulations of city dynamics.
+            I take apart ML algorithms and build the infrastructure that runs them. 
+            Currently in <b><span className="acc">New York</span></b>, developing
+            large-scale agent-based models, grounded in real mobility data, to 
+            study how city-wide patterns emerge from individual behavior.
           </p>
 
           <div className={"hero-ctas" + (done ? " in" : "")}>

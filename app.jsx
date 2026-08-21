@@ -263,8 +263,8 @@ function Terminal({ open, onClose, onNav, onTheme, currentTheme, onMode, current
   };
 
   useEffect(() => {
-    if (open && !game) setTimeout(() => inputRef.current?.focus(), 50);
-  }, [open, game]);
+    if (open && !game && !minimized) setTimeout(() => inputRef.current?.focus(), 50);
+  }, [open, game, minimized]);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -407,7 +407,8 @@ function Terminal({ open, onClose, onNav, onTheme, currentTheme, onMode, current
     <div className="term-overlay" onClick={onOverlayClick}>
       <div
         ref={shellRef}
-        className={"term-shell" + (dragging ? " is-dragging" : "")}
+        className={"term-shell" + (dragging ? " is-dragging" : "")
+          + (minimized ? " is-min" : "") + (maximized ? " is-max" : "")}
         style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
       >
         <div className="term" onClick={e => e.stopPropagation()}>

@@ -518,8 +518,37 @@
     touch-action: none;   /* let pointermove drag instead of scrolling the page */
   }
   .term-shell.is-dragging .term-head { cursor: grabbing; }
-  .term-dots { display: flex; gap: 7px; }
-  .term-dots span { width: 11px; height: 11px; border-radius: 999px; display: block; }
+  /* Traffic lights — real buttons. Glyphs stay hidden until the group
+     is hovered, the way a native title bar behaves. */
+  .term-dots { display: flex; gap: 7px; align-items: center; }
+  .term-dot {
+    width: 12px; height: 12px; padding: 0; border: 0; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; -webkit-appearance: none; appearance: none;
+    font-family: var(--font-mono); font-size: 9px; line-height: 1;
+    color: rgba(0, 0, 0, 0.55);
+    transition: filter var(--dur-fast) var(--ease);
+  }
+  .term-dot span { opacity: 0; transition: opacity var(--dur-fast) var(--ease); }
+  .term-dots:hover .term-dot span { opacity: 1; }
+  .term-dot:hover { filter: brightness(1.15); }
+  .term-dot:active { filter: brightness(0.85); }
+  .term-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .term-dot-close { background: #ff5f56; }
+  .term-dot-min   { background: #ffbd2e; }
+  .term-dot-max   { background: #27c93f; }
+
+  /* Minimized — roll up to just the title bar. */
+  .term-shell.is-min { height: auto; max-height: none; }
+  .term-shell.is-min .term { height: auto; }
+  .term-shell.is-min .term-body { display: none; }
+
+  /* Maximized — near-fullscreen, re-centred by the click handler. */
+  .term-shell.is-max {
+    max-width: min(1400px, calc(100vw - 48px));
+    width: calc(100vw - 48px);
+    height: calc(100vh - 48px); max-height: none;
+  }
   .term-title { font-family: var(--font-mono); font-size: 12px; color: var(--fg-2); }
   .term-body {
     flex: 1; padding: 14px 16px; overflow-y: auto;

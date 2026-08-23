@@ -174,19 +174,55 @@
   }
   .hero-sub .acc { color: var(--accent); }
   .hero-ctas { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .hero-hint { font-family: var(--font-mono); font-size: 13px; color: var(--fg-3); margin-left: 4px; }
+  .hero-hint-row { margin-top: 18px; }
+  .hero-hint { font-family: var(--font-mono); font-size: 13px; color: var(--fg-3); }
+
+  /* Social marks — bare glyphs, no chrome; they light up on hover ---- */
+  /* Hairline between the button pair and the icons, so the CTA row reads
+     as two groups rather than one long undifferentiated strip. */
+  .cta-divider {
+    width: 1px; height: 22px; flex: none; margin: 0 6px;
+    background: var(--border-2);
+  }
+  .hero-socials { display: flex; gap: 10px; }
+  /* No border or fill — the box is only a hit target, sized past the glyph
+     so the icons stay comfortably tappable without drawing a tile. */
+  .social-link {
+    display: grid; place-items: center;
+    width: 38px; height: 38px; background: transparent; border: 0;
+    color: var(--fg-2); text-decoration: none;
+    transition: color var(--dur-fast) var(--ease),
+                filter var(--dur-fast) var(--ease),
+                transform var(--dur-fast) var(--ease);
+  }
+  .social-link svg { width: 26px; height: 26px; display: block; }
+  /* LinkedIn's mark is a solid square that fills its box corner to corner,
+     so it reads heavier than the other two at the same nominal size. */
+  .social-link[data-icon="linkedin"] svg { width: 24px; height: 24px; }
+  /* With no tile to light up, the glow hugs the glyph silhouette instead —
+     two stacked drop-shadows: a tight core and a wider ambient bloom. */
+  .social-link:hover, .social-link:focus-visible {
+    color: var(--accent); transform: translateY(-2px);
+    filter: drop-shadow(0 0 6px var(--accent-glow))
+            drop-shadow(0 0 14px var(--accent-glow));
+  }
+  .social-link:active { transform: translateY(-1px) scale(0.94); }
 
   /* Fade-up once the boot sequence finishes -------------------------- */
-  .hero-name, .hero-sub, .hero-ctas, .hero-right {
+  .hero-name, .hero-sub, .hero-ctas, .hero-hint-row, .hero-right {
     opacity: 0; transform: translateY(8px);
     transition: opacity 420ms var(--ease), transform 420ms var(--ease);
   }
   .hero-name.in  { opacity: 1; transform: none; transition-delay: 0ms; }
   .hero-sub.in   { opacity: 1; transform: none; transition-delay: 90ms; }
   .hero-ctas.in  { opacity: 1; transform: none; transition-delay: 180ms; }
+  .hero-hint-row.in { opacity: 1; transform: none; transition-delay: 240ms; }
   .hero-right.in { opacity: 1; transform: none; transition-delay: 130ms; }
   @media (prefers-reduced-motion: reduce) {
-    .hero-name, .hero-sub, .hero-ctas, .hero-right { opacity: 1; transform: none; }
+    .hero-name, .hero-sub, .hero-ctas, .hero-hint-row, .hero-right {
+      opacity: 1; transform: none;
+    }
+    .social-link:hover, .social-link:focus-visible { transform: none; }
     .hero-name .cursor, .caret { animation: none; }
   }
 

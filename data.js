@@ -11,6 +11,8 @@ const PROFILE = {
   githubUrl: "https://github.com/nahushvatsa",
   linkedin: "linkedin.com/in/nahush-shrivatsa",
   linkedinUrl: "https://www.linkedin.com/in/nahush-shrivatsa/",
+  scholar: "scholar.google.com/citations?user=cUALGg0AAAAJ",
+  scholarUrl: "https://scholar.google.com/citations?user=cUALGg0AAAAJ&hl=en",
   resumeUrl: "./nahush_resume.pdf",
   // ?v= busts browser + CDN caches whenever the file is replaced. Bump on change.
   photo: "./me.jpg?v=2",
@@ -150,6 +152,14 @@ const PROJECTS = [
 ];
 
 
+// Social profiles, shown as icon links in the hero. `icon` keys into the
+// brand marks in Sections.jsx — adding one here needs a path added there too.
+const SOCIALS = [
+  { icon: "linkedin", label: "LinkedIn",       href: PROFILE.linkedinUrl },
+  { icon: "github",   label: "GitHub",         href: PROFILE.githubUrl },
+  { icon: "scholar",  label: "Google Scholar", href: PROFILE.scholarUrl },
+];
+
 // Accent themes — cyclable via the terminal `theme` command.
 // `accent` is the dark-mode value; `accentLight` is darkened so it stays
 // legible on white. Glow and soft fills derive from these via color-mix.
@@ -162,5 +172,5 @@ const THEMES = [
 ];
 
 Object.assign(window, {
-  PROFILE, BOOT_LINES, EDUCATION, EXPERIENCE, PROJECTS, THEMES,
+  PROFILE, BOOT_LINES, EDUCATION, EXPERIENCE, PROJECTS, THEMES, SOCIALS,
 });

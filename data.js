@@ -38,7 +38,7 @@ const EDUCATION = [
     degree: "M.S. Computer Science",
     years: "2025 — 2027",
     loc: "New York, NY",
-    did: "Building agent-based models of urban mobility at the RUN Lab, plus real-time neural imaging pipelines and network switch benchmarking at NYU IT's High Speed Research Network.",
+    did: ", plus real-time neural imaging pipelines and network switch benchmarking at NYU IT's High Speed Research Network.",
   },
   {
     school: "University of Washington",

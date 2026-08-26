@@ -57,9 +57,9 @@ const EDUCATION = [
 const EXPERIENCE = [
   {
     year: "2026 — now",
-    role: "Research Engineer",
+    role: "Technical Program Lead",
     company: "NYU IT · HSRN",
-    desc: "Team lead for the real-time applications team. Built a CaImAn + FIOLA pipeline that processes neuronal fluorescence imaging on the fly, enabling closed-loop experiments. Currently benchmarking power consumption across NYU's enterprise network switches.",
+    desc: "Technical Program Lead for the HSRN Vertically Integrated Project (VIP). I manage concurrent technical projects across 6 teams spanning 40+ students, resolving technical challenges, allocating resources, and making sure deliverables are submitted on time. Previously, I built a CaImAn + FIOLA pipeline that processes neuronal fluorescence imaging on the fly, enabling closed-loop experiments and benchmarked power consumption across NYU's enterprise network switches.",
     loc: "New York, NY",
     current: true,
   },

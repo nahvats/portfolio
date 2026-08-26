@@ -59,7 +59,7 @@ const EXPERIENCE = [
     year: "2026 — now",
     role: "Technical Program Lead",
     company: "NYU IT · HSRN",
-    desc: "I manage concurrent technical projects across 6 teams spanning 40+ students, resolving technical challenges, allocating resources, and making sure deliverables are submitted on time. Previously, I built a real-time ML pipeline that processes neuronal fluorescence imaging and benchmarked power consumption across NYU's enterprise network switches.",
+    desc: "I manage concurrent technical projects across 6 teams of 40+ students, resolving technical challenges, allocating resources, and ensuring deliverables are submitted on time. Previously, I built a real-time ML pipeline that processes neuronal fluorescence imaging and benchmarked power consumption across NYU's enterprise network switches.",
     loc: "New York, NY",
     current: true,
   },

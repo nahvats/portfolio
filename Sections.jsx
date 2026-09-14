@@ -80,8 +80,8 @@ function Hero({ onPrimaryCta, onSecondaryCta }) {
           <p className={"hero-sub" + (done ? " in" : "")}>
             I take apart ML algorithms and build the infrastructure that runs them. 
             Currently in <b><span className="acc">New York</span></b>, I am developing
-            large-scale agent-based models, grounded in real mobility data, to 
-            study how city-wide patterns emerge from individual behavior.
+            large-scale agent-based models, grounded in real mobility data, along with
+            analyzing power usage across NYU's enterprise network switches.
           </p>
 
           <div className={"hero-ctas" + (done ? " in" : "")}>

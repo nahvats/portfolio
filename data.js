@@ -7,8 +7,8 @@ const PROFILE = {
   role: "algorithms, systems & ai",
   location: "New York City",
   email: "ns6928@nyu.edu",
-  github: "github.com/nahushvatsa",
-  githubUrl: "https://github.com/nahushvatsa",
+  github: "github.com/nahvats",
+  githubUrl: "https://github.com/nahvats",
   linkedin: "linkedin.com/in/nahush-shrivatsa",
   linkedinUrl: "https://www.linkedin.com/in/nahush-shrivatsa/",
   scholar: "scholar.google.com/citations?user=cUALGg0AAAAJ",
@@ -123,7 +123,7 @@ const PROJECTS = [
     year: "2025",
     summary: "Self-hosted multi-service stack running 15+ Docker containers across isolated domains with zero-trust remote access. Currently hosting this site!",
     tags: ["Docker", "WireGuard", "Tailscale"],
-    href: "https://github.com/nahushvatsa",
+    href: "https://github.com/nahvats",
   },
   {
     id: "distributed-kv",
@@ -139,7 +139,7 @@ const PROJECTS = [
     year: "2022",
     summary: "Employment app for underrepresented minorities. Led front-end. Won Best Use of Google Cloud at a 500+ participant hackathon.",
     tags: ["React Native", "TypeScript", "GCP"],
-    href: "https://github.com/nahushvatsa/Together",
+    href: "https://github.com/nahvats/Together",
   },
   {
     id: "chemlab",
@@ -147,7 +147,7 @@ const PROJECTS = [
     year: "2020",
     summary: "Full-stack lab equipment management platform with inventory tracking, account balances and customer profiles.",
     tags: ["Python", "Flask", "SQL"],
-    href: "https://github.com/nahushvatsa/chemLab",
+    href: "https://github.com/nahvats/chemLab",
   },
 ];
 

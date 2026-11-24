@@ -158,6 +158,7 @@ const SOCIALS = [
   { icon: "linkedin", label: "LinkedIn",       href: PROFILE.linkedinUrl },
   { icon: "github",   label: "GitHub",         href: PROFILE.githubUrl },
   { icon: "scholar",  label: "Google Scholar", href: PROFILE.scholarUrl },
+  { icon: "resume",   label: "Resume",         href: PROFILE.resumeUrl },
 ];
 
 // Accent themes — cyclable via the terminal `theme` command.

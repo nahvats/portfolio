@@ -212,6 +212,9 @@
   /* LinkedIn's mark is a solid square that fills its box corner to corner,
      so it reads heavier than the other two at the same nominal size. */
   .social-link[data-icon="linkedin"] svg { width: 24px; height: 24px; }
+  /* The resume page is a tall, narrow glyph with padding on all sides, so it
+     reads small at 26px; scale it up until its height matches the others. */
+  .social-link[data-icon="resume"] svg { width: 30px; height: 30px; }
   /* With no tile to light up, the glow hugs the glyph silhouette instead —
      two stacked drop-shadows: a tight core and a wider ambient bloom. */
   .social-link:hover, .social-link:focus-visible {
